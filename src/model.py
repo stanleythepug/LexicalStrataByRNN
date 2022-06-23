@@ -71,7 +71,6 @@ class Emb_RNNLM(nn.Module):
         embs = self.embeddings(batch)
         output, hidden = self.i2R(embs)
         outputs = self.R2o(output)
-        outputs = self.softmax(outputs)
         #print('outputs', outputs.size())
         return outputs, hidden
         #return outputs, output, embs
