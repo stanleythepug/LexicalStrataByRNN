@@ -170,14 +170,14 @@ def user_interaction(max_chars, phone2ix, net1, net2, criterion, device):
     first_entry = True
     while True:
         if first_entry:
-            inp = input('Enter a word in all lower-case except that you may use N after a vowel. Don\'t use the letters c, j, l, q, v, x. If you use y, it must be followed by a, u or o. If you use w, it must be folowed by a. All consonants except n or N must be followed by a vowel or y. A word must end with a vowel or N. To quit, type X.\n')
+            inp = input('Enter a word in all lower-case except that you may use N after a vowel. Don\'t use the letters c, j, l, q, v, x. If you use y, it must be followed by a, u or o. If you use w, it must be folowed by a. All consonants except n or N must be followed by either (1) a vowel, (2) the same consonant if it is not r,h,w,or y or (3) y. A word must end with a vowel or N. To quit, type X.\n')
             first_entry = False
         else:
             inp = input('Enter another word. Type X to quit.\n')
         inp = inp.rstrip()
         if inp == 'X':
             break
-        if re.search(r'[^abdefghikmnoprstuwyz]', inp):
+        if re.search(r'[^abdefghikmnoprstuwyzN]', inp):
             print('Your word contains an illegal character')
             continue
         if re.search(r'[cjlqvx]', inp):
@@ -189,7 +189,7 @@ def user_interaction(max_chars, phone2ix, net1, net2, criterion, device):
         if re.search(r'y[^oua]', inp):
             print('y must be followed by a,u or o')
             continue
-        if re.search(r'[bdfghkmnprstz][^aeiouy]', inp):
+        if re.search(r'[bdfghkmnprstz][^aeiouy]', re.sub(r'([bdfgkmnpstz])\1', r'\1', inp)):
             print('A consonant must be followed by a vowel or y')
             continue
         wd_as_list = ['<s>'] + list(inp) + ['<e>'] 
