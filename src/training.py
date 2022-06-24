@@ -5,6 +5,7 @@ import torch.nn as nn
 import time
 import os
 import sys
+import re
 
 def compute_perplexity(dataset, net1, net2, device, bsz=1):
     criterion = nn.CrossEntropyLoss(ignore_index=0, reduction='sum')
@@ -33,7 +34,7 @@ def compute_perplexity(dataset, net1, net2, device, bsz=1):
     perplexity = torch.exp(nll / total_unmasked_tokens).cpu()
     return perplexity.data
     
-def train_lm(dataset, dev, params, net1, net2, ix2phone, start_time_for_file_id):
+def train_lm(dataset, dev, params, net1, net2, ix2phone, phone2ix, start_time_for_file_id, max_chars, interact_only):
     criterion = nn.CrossEntropyLoss(ignore_index=0)
     device = params['device']
     optimiser1 = torch.optim.Adam(net1.parameters(), lr=params['learning_rate'])
@@ -49,6 +50,10 @@ def train_lm(dataset, dev, params, net1, net2, ix2phone, start_time_for_file_id)
             net2.load_state_dict(checkpoint['net2_state_dict'])
             optimiser2.load_state_dict(checkpoint['optimiser1_state_dict'])
             net2.eval()
+        if interact_only:
+            user_interaction(max_chars, phone2ix, net1, net2, criterion, device)
+            return
+
     num_examples, seq_len = dataset.size()  
     print('There are', num_examples, 'training examples.')
     
@@ -160,5 +165,53 @@ def train_lm(dataset, dev, params, net1, net2, ix2phone, start_time_for_file_id)
                 newline = w + '\n'
                 f.write(newline)
             print(w)
+
+def user_interaction(max_chars, phone2ix, net1, net2, criterion, device):
+    first_entry = True
+    while True:
+        if first_entry:
+            inp = input('Enter a word in all lower-case except that you may use N after a vowel. Don\'t use the letters c, j, l, q, v, x. If you use y, it must be followed by a, u or o. If you use w, it must be folowed by a. All consonants except n or N must be followed by a vowel or y. A word must end with a vowel or N. To quit, type X.\n')
+            first_entry = False
+        else:
+            inp = input('Enter another word. Type X to quit.\n')
+        inp = inp.rstrip()
+        if inp == 'X':
+            break
+        if re.search(r'[^abdefghikmnoprstuwyz]', inp):
+            print('Your word contains an illegal character')
+            continue
+        if re.search(r'[cjlqvx]', inp):
+            print('Your word contains an illegal character')
+            continue
+        if re.search(r'w[^a]', inp):
+            print('w must be followed by a')
+            continue
+        if re.search(r'y[^oua]', inp):
+            print('y must be followed by a,u or o')
+            continue
+        if re.search(r'[bdfghkmnprstz][^aeiouy]', inp):
+            print('A consonant must be followed by a vowel or y')
+            continue
+        wd_as_list = ['<s>'] + list(inp) + ['<e>'] 
+        wd_as_list_padded = wd_as_list + ['<p>']*(max_chars-len(wd_as_list))
+        with torch.no_grad():
+            wd_as_tensor = torch.LongTensor([phone2ix[p] for p in wd_as_list_padded]).to(device)
+            wd = torch.unsqueeze(wd_as_tensor, 0).to(device)
+            (preds1, hidden1) = net1(wd)#.to(device)
+            preds1 = preds1[:, :-1, :].contiguous().view(-1, net1.vocab_size).to(device)
+            if net2 is not None:
+                (preds2, hidden2) = net2(wd)#.to(device)
+                preds2 = preds2[:, :-1, :].contiguous().view(-1, net2.vocab_size).to(device)
+            targets = wd[:, 1:].contiguous().view(-1).to(device)
+            l1 = criterion(preds1, targets)
+            if net2 is not None:
+                l2 = criterion(preds2, targets)
+                if l1 < l2:
+                    print('Your word fits best into group 1')
+                else:
+                    print('Your word fits best into group 2')
+
+
+
   
         

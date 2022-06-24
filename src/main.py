@@ -19,9 +19,10 @@ DEFAULT_TIED = True
 DEFAULT_TRAINING_SPLIT = 80
 DEFAULT_DEV = True
 DEFAULT_DEVICE = None
-DEFAULT_USE_SAVED = None
+DEFAULT_USE_SAVED = True
 from datetime import datetime
 two_rnns = True
+interact_only = True
 
 print('Embedding dimension', DEFAULT_D_EMB)
 print('Hidden dimension', DEFAULT_D_HID)
@@ -112,7 +113,7 @@ if __name__ == "__main__":
         use_saved = False
 
     raw_data = get_corpus_data(args.input_file)
-    inventory, phone2ix, ix2phone, training_data, dev, num_words = process_data(raw_data, device, use_saved, dev=args.dev, training_split=args.training_split)
+    inventory, phone2ix, ix2phone, training_data, dev, num_words, max_chars = process_data(raw_data, device, use_saved, dev=args.dev, training_split=args.training_split)
     inventory_size = len(inventory)
 
     rnn_params = {}
@@ -157,8 +158,8 @@ if __name__ == "__main__":
     print(sum(p.numel() for p in RNN1.parameters() if p.requires_grad))
     if two_rnns:
         print(sum(p.numel() for p in RNN2.parameters() if p.requires_grad))
-    train_lm(training_data, dev, rnn_params, RNN1, RNN2, ix2phone, start_time)
-    #train_lm(training_data, dev, rnn_params, RNN1, RNN2, ix2phone, phone2ix, start_time)
+    #train_lm(training_data, dev, rnn_params, RNN1, RNN2, ix2phone, start_time)
+    train_lm(training_data, dev, rnn_params, RNN1, RNN2, ix2phone, phone2ix, start_time, max_chars, interact_only)
     RNN1.eval()
     if two_rnns:
         RNN2.eval()

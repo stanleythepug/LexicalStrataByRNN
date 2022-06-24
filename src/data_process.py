@@ -16,7 +16,6 @@ def get_corpus_data(filename):
         raw_data.append(line)
     print('lrd', len(raw_data))
     return raw_data
-import torch.nn as nn
 
 def process_data(string_training_data, device, use_saved, dev=True, training_split=60):
     data_loaded = False
@@ -25,24 +24,17 @@ def process_data(string_training_data, device, use_saved, dev=True, training_spl
     # all data points need to be padded to the maximum length
     max_chars = max([len(x) for x in string_training_data])
     print('max_chars', max_chars)
-    if use_saved:
+    if use_saved and os.path.exists('inventory.json') and os.path.exists('phone2ix.json') and os.path.exists('ix2phone.json') and os.path.exists('training_data.json'):
         print('Using saved')
-        if os.path.exists('inventory.json') and os.path.exists('phone2ix.json') and os.path.exists('ix2phone.json') and os.path.exists('training_data.json'):
-            with open('inventory.json', 'r') as f1:
-                inventory = json.load(f1)
-            with open('phone2ix.json', 'r') as f2:
-                phone2ix = json.load(f2)
-            with open('ix2phone.json', 'r') as f3:
-                phone2ix = json.load(f3)
-            with open('training_data.json', 'r') as f4:
-                string_training_data = json.load(f4)
-            data_loaded = True
-        else:
-            random.shuffle(string_training_data)
-            string_training_data = [
-                sequence + ['<p>'] * (max_chars - len(sequence)) 
-                for sequence in string_training_data]
-
+        with open('inventory.json', 'r') as f1:
+            inventory = json.load(f1)
+        with open('phone2ix.json', 'r') as f2:
+            phone2ix = json.load(f2)
+        with open('ix2phone.json', 'r') as f3:
+            ix2phone = json.load(f3)
+        with open('training_data.json', 'r') as f4:
+            string_training_data = json.load(f4)
+        data_loaded = True
     else:
         random.shuffle(string_training_data)
         string_training_data = [
@@ -93,7 +85,7 @@ def process_data(string_training_data, device, use_saved, dev=True, training_spl
             json.dump(string_training_data, f8)
 
 
-    return inventory, phone2ix, ix2phone, training_data, dev, num_words
+    return inventory, phone2ix, ix2phone, training_data, dev, num_words, max_chars
 
 def process_features(file_path, inventory):
     feature_dict = {}

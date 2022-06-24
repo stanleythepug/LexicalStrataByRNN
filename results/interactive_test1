@@ -1,0 +1,47 @@
+Enter a word in all lower-case except that you may use N after a vowel. Don't use the letters c, j, l, q, v, x. If you use y, it must be followed by a, u or o. If you use w, it must be folowed by a. All consonants except n or N must be followed by a vowel or y. A word must end with a vowel or N. To quit, type X.
+kokoro
+Your word fits best into group 1
+Enter another word. Type X to quit.
+kyootyoo
+Your word fits best into group 2
+Enter another word. Type X to quit.
+makura
+Your word fits best into group 1
+Enter another word. Type X to quit.
+syutu
+Your word fits best into group 2
+Enter another word. Type X to quit.
+okureru
+Your word fits best into group 1
+Enter another word. Type X to quit.
+ryokoo
+Your word fits best into group 2
+Enter another word. Type X to quit.
+otozureru
+Your word fits best into group 1
+Enter another word. Type X to quit.
+suru
+Your word fits best into group 1
+Enter another word. Type X to quit.
+firumu
+Your word fits best into group 1
+Enter another word. Type X to quit.
+tookyoo
+Your word fits best into group 2
+Enter another word. Type X to quit.
+betu
+Your word fits best into group 1
+Enter another word. Type X to quit.
+otya
+Your word fits best into group 1
+Enter another word. Type X to quit.
+okaasan
+Your word fits best into group 1
+Enter another word. Type X to quit.
+zyookyoo
+Your word fits best into group 2
+Enter another word. Type X to quit.
+X
+(base) eric@eric-Lenovo-V15-ADA:~/CompLing/RNN_strata_revisited/LexicalStrataByRNN$ 
+
+
