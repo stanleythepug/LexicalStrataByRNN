@@ -207,9 +207,9 @@ def user_interaction(max_chars, phone2ix, net1, net2, criterion, device):
             if net2 is not None:
                 l2 = criterion(preds2, targets)
                 if l1 < l2:
-                    print('Your word fits best into group 1')
+                    print('Your word fits best into group 1, which suggests that it is a Yamato word.')
                 else:
-                    print('Your word fits best into group 2')
+                    print('Your word fits best into group 2, which suggests that it is a Sino-Japanese word.')
 
 
 
