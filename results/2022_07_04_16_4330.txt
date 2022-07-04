@@ -1,0 +1,1 @@
+epoch 0 loss tensor(113297.7656) perplexity tensor(5.3966)

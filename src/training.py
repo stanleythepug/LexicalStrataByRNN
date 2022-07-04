@@ -48,7 +48,7 @@ def train_lm(dataset, dev, params, net1, net2, ix2phone, phone2ix, start_time_fo
         net1.eval()
         if net2 is not None:
             net2.load_state_dict(checkpoint['net2_state_dict'])
-            optimiser2.load_state_dict(checkpoint['optimiser1_state_dict'])
+            optimiser2.load_state_dict(checkpoint['optimiser2_state_dict'])
             net2.eval()
         if interact_only:
             user_interaction(max_chars, phone2ix, net1, net2, criterion, device)

@@ -17,7 +17,7 @@ def get_corpus_data(filename):
     print('lrd', len(raw_data))
     return raw_data
 
-def process_data(string_training_data, device, use_saved, dev=True, training_split=60):
+def process_data(string_training_data, device, use_saved, dev=False, training_split=60):
     data_loaded = False
     print('std', len(string_training_data))
     num_words = len(string_training_data)
@@ -25,7 +25,7 @@ def process_data(string_training_data, device, use_saved, dev=True, training_spl
     max_chars = max([len(x) for x in string_training_data])
     print('max_chars', max_chars)
     if use_saved and os.path.exists('inventory.json') and os.path.exists('phone2ix.json') and os.path.exists('ix2phone.json') and os.path.exists('training_data.json'):
-        print('Using saved')
+        print('Using saved data')
         with open('inventory.json', 'r') as f1:
             inventory = json.load(f1)
         with open('phone2ix.json', 'r') as f2:
@@ -47,14 +47,14 @@ def process_data(string_training_data, device, use_saved, dev=True, training_spl
     
         # dictionaries for looking up the index of a phone and vice versa
         phone2ix = {p: ix for (ix, p) in enumerate(inventory)}
-        ix2phone = {ix: p for (ix, p) in enumerate(inventory)}
+        ix2phone = {str(ix): p for (ix, p) in enumerate(inventory)}
         index_of_padded = phone2ix['<p>']
         wrongly_assigned = ix2phone[0]
         index_of_wrongly_assigned = phone2ix[wrongly_assigned]
         phone2ix['<p>'] = 0
         phone2ix[wrongly_assigned] = index_of_padded
-        ix2phone[0] = '<p>'
-        ix2phone[index_of_padded] = wrongly_assigned
+        ix2phone['0'] = '<p>'
+        ix2phone[str(index_of_padded)] = wrongly_assigned
         print(phone2ix)
 
     as_ixs = [
