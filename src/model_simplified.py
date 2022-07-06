@@ -21,7 +21,6 @@ class Emb_RNNLM(nn.Module):
                 self.R2o.weight = self.embeddings.weight
             else:
                 print("Dimensions don't support tied embeddings")
-        self.softmax = nn.Softmax(dim=1)
 
     def forward(self, batch):
         batches, seq_len = batch.size()
